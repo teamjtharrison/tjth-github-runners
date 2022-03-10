@@ -10,6 +10,8 @@ env:
 
 jobs:
   build-and-push-image:
+    env:
+      COMMIT_SHA8: ${GITHUB_SHA::8}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -33,5 +35,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${GITHUB_SHA::6}
+          tags: $COMMIT_SHA8
           labels: ${{ steps.meta.outputs.labels }}
