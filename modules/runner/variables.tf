@@ -10,3 +10,7 @@ variable "instance_type" {
 variable "github_team_url" {
   description = "The team to which to attach the github runner"
 }
+
+variable "" {
+  
+}

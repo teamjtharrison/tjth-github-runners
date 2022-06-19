@@ -10,17 +10,6 @@ env:
 jobs:
   process-pr:
     runs-on: ubuntu-latest
-    strategy:
-      # Subdirectories to loop over
-      matrix: { 
-        dirs: [
-          "1_github_runners",
-          "1_github_runners"
-        ]
-      }
-    defaults:
-      run:
-        working-directory: "./${{ matrix.env }}"
     steps:
       - uses: actions/checkout@v2
         with:
@@ -46,7 +35,7 @@ jobs:
         id: terraform_plan
         uses: dflook/terraform-plan@v1
         with:
-          path: ${{ matrix.dirs }}
+          path: ./
       - name: Generate Infracost JSON
         run: |
           cat ${{ steps.terraform_plan.outputs.json_plan_path }} > plan.json
@@ -62,7 +51,7 @@ jobs:
       - name: terraform fmt
         uses: dflook/terraform-fmt-check@v1
         with:
-          path: ${{ matrix.dirs }}
+          path: ./
       - name: Commit Terraform
         uses: stefanzweifel/git-auto-commit-action@v4
         with: 
