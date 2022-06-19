@@ -45,7 +45,7 @@ jobs:
         id: terraform_plan
         uses: dflook/terraform-plan@v1
         with:
-          path: ./
+          path: ${{ matrix.dir }}
       - name: Generate Infracost JSON
         run: |
           cat ${{ steps.terraform_plan.outputs.json_plan_path }} > plan.json
@@ -61,7 +61,7 @@ jobs:
       - name: terraform fmt
         uses: dflook/terraform-fmt-check@v1
         with:
-          path: ./
+          path: ${{ matrix.dir }}
       - name: Commit Terraform
         uses: stefanzweifel/git-auto-commit-action@v4
         with: 
