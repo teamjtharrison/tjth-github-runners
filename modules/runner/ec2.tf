@@ -1,7 +1,7 @@
 ## Webserver
 resource "aws_security_group" "this" {
-  name        = "${var.instance_name}-sg"
-  description = "Security group for ${var.instance_name}"
+  name        = "${var.runner_name}-sg"
+  description = "Security group for ${var.runner_name}"
 
   dynamic "ingress" {
     for_each = local.ingress_ports
@@ -23,19 +23,19 @@ resource "aws_security_group" "this" {
   }
 
   tags = {
-    Name = "${var.instance_name}-sg"
+    Name = "${var.runner_name}-sg"
   }
 }
 
 resource "aws_instance" "this" {
   ami           = "ami-00c90dbdc12232b58"
-  instance_type = local.instance_type
+  instance_type = var.instance_type
   vpc_security_group_ids = [
     "${aws_security_group.this.id}"
   ]
   key_name = "tjth-key"
   tags = {
-    Name = "${var.instance_name}"
+    Name = "${var.runner_name}"
   }
 
   iam_instance_profile = aws_iam_instance_profile.this.id
@@ -71,15 +71,6 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
   sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin jq awscli
 
   aws configure set default.region eu-west-1
-  ssh-keyscan github.com >> ~/.ssh/known_hosts
-  aws configure set default.region eu-west-1
-  aws ssm get-parameter --name github_deploy_key --with-decryption | jq -r '.Parameter.Value' > /root/.ssh/id_rsa
-  chmod 600 /root/.ssh/id_rsa
-  git clone git@github.com:tjtharrison/tcoin.git
-  echo $(aws ssm get-parameter --name github_api_token --with-decryption | jq -r '.Parameter.Value') | sudo docker login ghcr.io -u tjtharrison --password-stdin
-  cd tcoin
-  docker compose up -d 
-
   # Setup runner 
   mkdir /home/ubuntu/actions-runner
   cd /home/ubuntu/actions-runner
@@ -87,7 +78,7 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
   echo "14839ba9f3da01abdd51d1eae0eb53397736473542a8fae4b7618d05a5af7bb5  actions-runner-linux-x64-2.292.0.tar.gz" | shasum -a 256 -c
   tar xzf ./actions-runner-linux-x64-2.292.0.tar.gz
   chown -R ubuntu:ubuntu /home/ubuntu/actions-runner
-  sudo -u ubuntu bash -c "/home/ubuntu/actions-runner/config.sh --url https://github.com/tjtharrison/tcoin --token $(aws ssm get-parameter --name github_runner_token --with-decryption | jq -r '.Parameter.Value')"
+  sudo -u ubuntu bash -c "/home/ubuntu/actions-runner/config.sh --url ${var.github_team_url} --token $(aws ssm get-parameter --name github_runner_token --with-decryption | jq -r '.Parameter.Value')"
   sudo -u ubuntu bash -c "/home/ubuntu/actions-runner/run.sh"
 EOF
 }

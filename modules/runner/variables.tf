@@ -7,3 +7,6 @@ variable "instance_type" {
   default     = "t2.micro"
 }
 
+variable "github_team_url" {
+  description = "The team to which to attach the github runner"
+}
