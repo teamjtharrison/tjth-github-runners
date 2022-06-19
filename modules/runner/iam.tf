@@ -46,6 +46,18 @@ resource "aws_iam_policy" "this" {
       },
       {
         Action = [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:DeleteObject"
+        ]
+        Effect = "Allow"
+        Resource = [
+          "arn:aws:s3:::tjth-states-827047072822",
+          "arn:aws:s3:::tjth-states-827047072822/*"
+        ]
+      },
+      {
+        Action = [
           "ssm:GetParameter",
         ]
         Effect = "Allow"

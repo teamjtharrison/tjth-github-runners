@@ -1,5 +1,6 @@
 ## Webserver
 resource "aws_security_group" "this" {
+  #checkov:skip=CKV2_AWS_5:False alarm, attached on L#35
   name        = "${var.runner_name}-sg"
   description = "Security group for ${var.runner_name}"
 
