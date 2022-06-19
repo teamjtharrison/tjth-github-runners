@@ -1,0 +1,30 @@
+name: terraform-pr
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  apply:
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      TERRAFORM_SSH_KEY: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
+      TF_VAR_pgp_pub_key: ${{ secrets.PGP_SIGNING_KEY }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ secrets.TERRAFORM_ROLE_ARN}}
+          aws-region: eu-west-1
+          role-duration-seconds: 3600
+
+      - name: terraform apply
+        uses: dflook/terraform-apply@v1
+        with:
+          path: ./
