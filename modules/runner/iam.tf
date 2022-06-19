@@ -50,7 +50,7 @@ resource "aws_iam_policy" "this" {
           "s3:PutObject",
           "s3:DeleteObject"
         ]
-        Effect   = "Allow"
+        Effect = "Allow"
         Resource = [
           "arn:aws:s3:::tjth-states-827047072822",
           "arn:aws:s3:::tjth-states-827047072822/*"
