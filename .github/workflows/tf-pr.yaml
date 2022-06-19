@@ -28,7 +28,7 @@ jobs:
         id: checkov
         uses: bridgecrewio/checkov-action@master
         with:
-          - skip_check: CKV_AWS_126,CKV_AWS_135
+          skip_check: CKV_AWS_126,CKV_AWS_135
       - uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
